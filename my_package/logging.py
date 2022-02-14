@@ -1,3 +1,7 @@
+"""
+    Реализация декоратора* логирования*
+"""
+
 import functools
 
 from loguru import logger
@@ -32,3 +36,38 @@ def logging(*, entry=True, exit=True, level="DEBUG"):
         return wrapped
 
     return wrapper
+
+
+@logging()
+def print_hello_world():
+    """
+        Демонстрация логирования без параметров
+    """
+    print('Hello World')
+
+
+@logging()
+def print_hello_world_with_args(a: int, b: str, c: list = None) -> tuple:
+    """
+        Демонстрация логирования с параметрами
+    :param a:
+    :param b:
+    :param c:
+    :return:
+    """
+
+    if isinstance(a, int):
+        print(f'{a}')
+    else:
+        logger.error('{a} not int')
+
+    if isinstance(b, str):
+        print('{}'.format(b))
+    else:
+        logger.error('{b} not str')
+
+    print(f'{c=}')
+
+    logger.success('Green output =)')
+
+    return a, b, c

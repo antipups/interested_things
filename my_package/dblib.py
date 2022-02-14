@@ -3,8 +3,11 @@
 """
 
 import re
-from sqlite3 import Connection
+from sqlite3 import Connection as SqLiteConnection, Cursor
+from pymysql import Connection as MySQLConnection
+from pymysql.cursors import Cursor
 from loguru import logger
+
 from my_package import constants
 from abc import ABC
 
@@ -18,8 +21,14 @@ class _Database(ABC):
         """
             Возможно переобределение конктруктора в случае смены драйвера базы данных
         """
-        self._connect = Connection(constants.Filenames.SqliteDb)
-        self._cursor = self._connect.cursor()
+        self._connect = self._get_connection()
+        self._cursor = self._get_cursor()
+
+    def _get_connection(self) -> MySQLConnection | SqLiteConnection:
+        pass
+
+    def _get_cursor(self) -> Cursor:
+        return self._connect.cursor()
 
     def __enter__(self):
         """
@@ -77,10 +86,23 @@ class _Database(ABC):
         logger.info(f'Close DB connection')
 
 
-class Database(_Database):
+class SqliteDatabase(_Database):
     """
         Пишу кастомные запросы к БД
     """
     def __init__(self):
         super().__init__()
 
+    def _get_connection(self) -> SqLiteConnection:
+        return SqLiteConnection(constants.Filenames.SqliteDb)
+
+
+class MySQLDatabase(_Database):
+    """
+        Пишу кастомные запросы к БД
+    """
+    def __init__(self):
+        super().__init__()
+
+    def _get_connection(self) -> MySQLConnection:
+        return MySQLConnection(**constants.MySQLDatabase.Connection)

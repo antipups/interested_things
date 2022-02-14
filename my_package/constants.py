@@ -5,3 +5,11 @@
 
 class Filenames:
     SqliteDb = 'db.db'
+
+
+class MySQLDatabase:
+    Connection = dict(host='localhost',
+                      port='8083',
+                      db='test',
+                      user='root',
+                      password='root')
